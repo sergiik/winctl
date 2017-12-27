@@ -37,6 +37,8 @@ private:
 	static NAN_METHOD(move);
 	static NAN_METHOD(moveRelative);
 	static NAN_METHOD(dimensions);
+	static NAN_METHOD(getClientRect);
+	static NAN_METHOD(clientToScreen);
 
 	HWND windowHandle;
 };

@@ -26,6 +26,8 @@ NAN_MODULE_INIT(Window::Init) {
 	Nan::SetPrototypeMethod(tpl, "move", move);
 	Nan::SetPrototypeMethod(tpl, "moveRelative", moveRelative);
 	Nan::SetPrototypeMethod(tpl, "dimensions", dimensions);
+	Nan::SetPrototypeMethod(tpl, "getClientRect", getClientRect);
+	Nan::SetPrototypeMethod(tpl, "clientToScreen", clientToScreen);
 
 	constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
 	Nan::Set(target, Nan::New("Window").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -276,5 +278,33 @@ NAN_METHOD(Window::dimensions) {
 	Nan::Set(result, Nan::New("top").ToLocalChecked(), Nan::New(dim.top));
 	Nan::Set(result, Nan::New("right").ToLocalChecked(), Nan::New(dim.right));
 	Nan::Set(result, Nan::New("bottom").ToLocalChecked(), Nan::New(dim.bottom));
+	info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(Window::getClientRect) {
+	Window* obj = Nan::ObjectWrap::Unwrap<Window>(info.This());
+	RECT dim;
+	GetClientRect(obj->windowHandle, &dim);
+
+	v8::Local<v8::Object> result = Nan::New<v8::Object>();
+	Nan::Set(result, Nan::New("left").ToLocalChecked(), Nan::New(dim.left));
+	Nan::Set(result, Nan::New("top").ToLocalChecked(), Nan::New(dim.top));
+	Nan::Set(result, Nan::New("right").ToLocalChecked(), Nan::New(dim.right));
+	Nan::Set(result, Nan::New("bottom").ToLocalChecked(), Nan::New(dim.bottom));
+	info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(Window::clientToScreen) {
+	Window* obj = Nan::ObjectWrap::Unwrap<Window>(info.This());
+
+	POINT dim;
+	dim.x = 0;
+	dim.y = 0;
+
+	ClientToScreen(obj->windowHandle, &dim);
+
+	v8::Local<v8::Object> result = Nan::New<v8::Object>();
+	Nan::Set(result, Nan::New("left").ToLocalChecked(), Nan::New(dim.x));
+	Nan::Set(result, Nan::New("top").ToLocalChecked(), Nan::New(dim.y));
 	info.GetReturnValue().Set(result);
 }
